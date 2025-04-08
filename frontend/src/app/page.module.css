@@ -1,0 +1,15 @@
+.grid {
+  column-count: 3; /* Количество колонок */
+  column-gap: 16px; /* Расстояние между колонками */
+}
+
+.item {
+  height: 300px;
+
+  display: inline-block; /* Нужно, чтобы элементы не разрывались */
+  width: 100%; /* Элемент занимает всю ширину своей колонки */
+  margin-bottom: 16px; /* Расстояние между элементами */
+  background: lightgray;
+  padding: 8px;
+  border-radius: 8px;
+}
