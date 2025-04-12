@@ -1,0 +1,17 @@
+{
+  "Header": {
+    "title": "Найди это.",
+    "description": "Быстрый поиск стикеров и гифок, которые тебе нужны"
+  },
+  "SearchInput": {
+    "placeholder": "Гифки, Стикеры..."
+  },
+  "SearchButton": {
+    "active": "Найти это.",
+    "loading": "Думаю..."
+  },
+  "Media": {
+    "gif": "GIF",
+    "sticker": "Стикер"
+  }
+}

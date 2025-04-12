@@ -1,0 +1,17 @@
+{
+  "Header": {
+    "title": "Find it.",
+    "description": "Quickly find the GIF stickers you need"
+  },
+  "SearchInput": {
+    "placeholder": "Gifs, Stickers..."
+  },
+  "SearchButton": {
+    "active": "Find it.",
+    "loading": "Looading..."
+  },
+  "Media": {
+    "gif": "GIF",
+    "sticker": "Sticker"
+  }
+}
