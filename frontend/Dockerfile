@@ -1,52 +1,29 @@
-# ========================
-# STAGE 1: Build
-# ========================
-FROM node:23-alpine AS builder
+FROM node:23-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+# Этап 1: базовый образ с pnpm через corepack
 
-# Установка зависимостей для сборки
-RUN apk add --no-cache libc6-compat
-
-RUN npm install -g pnpm
+FROM base AS deps
 WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+# Этап 2: установка зависимостей
 
-# Копируем package.json и package-lock.json/yarn.lock
-COPY pnpm-lock.yaml* ./
-COPY package*.json ./
-
-# Устанавливаем зависимости
-RUN npm install --frozen-lockfile
-
-# Копируем исходный код
+FROM base AS build
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN pnpm run build
+# Этап 3: сборка приложения
 
-# Сборка проекта
-RUN npm run build
-
-# ========================
-# STAGE 2: Production
-# ========================
-FROM node:23-alpine AS runner
-
-# Опционально: установка зависимостей, если нужны SSR или API
-RUN apk add --no-cache libc6-compat
-
-# Устанавливаем рабочую директорию
+FROM base AS runner
 WORKDIR /app
-
-# Устанавливаем переменные окружения
-ENV NODE_ENV=production
-
-# Копируем необходимые файлы из стадии builder
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
-# Если используется next.config.js или tsconfig.json, копируем при необходимости
-# COPY --from=builder /app/next.config.js ./next.config.js
-
-# Указываем порт, если нужно
+COPY --from=build /app/public ./public
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/package.json ./package.json
+COPY --from=deps /app/node_modules ./node_modules
 EXPOSE 3000
+CMD ["pnpm", "start"]
+# Этап 4: финальный образ
 
-# Запуск приложения
-CMD ["npm", "start"]
